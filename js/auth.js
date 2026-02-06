@@ -16,7 +16,8 @@ form.addEventListener("submit", async (e) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
-    window.location.href = "app.html";
+    const next = new URLSearchParams(window.location.search).get("next") || "app.html";
+window.location.href = next;
   } catch (err) {
     errorEl.textContent = err.message || "Login fehlgeschlagen";
     errorEl.hidden = false;
