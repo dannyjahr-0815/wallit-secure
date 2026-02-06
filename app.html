@@ -20,6 +20,7 @@
   <script type="module">
     import { API_BASE } from "./js/config.js";
 
+    // Auth gate (no top-level await issues; this is a module)
     window.__wallitAuthReady = (async () => {
       try {
         const res = await fetch(API_BASE + "/auth/me", { credentials: "include" });
@@ -29,14 +30,15 @@
         if (!uid || typeof uid !== "string") throw new Error("no-user-id");
 
         try { localStorage.setItem("userId", uid); } catch {}
-
         const url = new URL(window.location.href);
         if (url.searchParams.get("userId") !== uid) {
           url.searchParams.set("userId", uid);
           window.history.replaceState({}, "", url.toString());
         }
-
         window.__wallitUserId = uid;
+
+        // Signal readiness for non-module scripts
+        window.dispatchEvent(new CustomEvent("wallit-auth-ready", { detail: { userId: uid } }));
         return { ok: true, userId: uid };
       } catch (e) {
         const next = encodeURIComponent("./app.html");
@@ -85,7 +87,7 @@ if (typeof FinanceManagerCloud !== 'undefined' && !FinanceManagerCloud.prototype
 }
 // --- end hotfix ---
 
-setTimeout(async () => {
+setTimeout(() => {
       container.style.opacity = "0";
       container.style.transition = "opacity 0.25s ease";
       setTimeout(() => container.remove(), 260);
@@ -3906,7 +3908,6 @@ details.wallit-accordion{
 
 
 <style>
-/* Safety: ensure Tailwind's .hidden exists even if CDN fails */
 .hidden{ display:none !important; }
 </style>
 
@@ -12095,8 +12096,10 @@ const gesamtEinkommen = einkommen + zusatzeinkommen;
       }
     }
 
-    setTimeout(() => {
-      try {
+    
+      const __wallitBoot = () => {
+        try {
+
         
         // --- v15.1 hotfix: ensure escapeHtml exists on instance (used by year view) ---
         if (!FinanceManagerCloud.prototype.escapeHtml) {
@@ -12117,7 +12120,9 @@ window.app = new FinanceManagerCloud();
             window.app.updateFAB();
           }
         }, 500);
-      } catch (error) {
+      
+        } catch (error) {
+
         console.error('❌ Fehler beim Initialisieren:', error);
         document.body.innerHTML = `
           <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: #f3f4f6;">
@@ -12131,8 +12136,30 @@ window.app = new FinanceManagerCloud();
             </div>
           </div>
         `;
+      
+        }
+      };
+
+      // Wait for auth gate (cookie session) before bootstrapping
+      const __start = () => __wallitBoot();
+
+      if (window.__wallitAuthReady && typeof window.__wallitAuthReady.then === "function") {
+        window.__wallitAuthReady.then(() => __start()).catch(() => __start());
+      } else {
+        // Fallback: listen for event, but don't block forever
+        let done = false;
+        const onReady = () => {
+          if (done) return;
+          done = true;
+          window.removeEventListener("wallit-auth-ready", onReady);
+          __start();
+        };
+        window.addEventListener("wallit-auth-ready", onReady, { once: true });
+        setTimeout(() => {
+          if (!done) __start();
+        }, 150);
       }
-    }, 100);
+
   </script>
   
   <!-- Floating Action Button for Quick Cloud Upload (Mobile + Desktop) -->
