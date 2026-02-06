@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Wallit – Login</title>
+</head>
+<body>
+  <h1>Login</h1>
+
+  <input id="email" placeholder="E-Mail">
+  <input id="password" type="password" placeholder="Passwort">
+  <button id="loginBtn">Login</button>
+
+  <script type="module">
+    import { login } from "./js/auth.js";
+
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const ok = await login(email, password);
+      if (ok) location.href = "app.html";
+    };
+  </script>
+</body>
+</html>
