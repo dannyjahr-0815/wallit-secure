@@ -1,5 +1,41 @@
-body {
-  font-family: system-ui, sans-serif;
-  background: #f4f4f4;
-  padding: 20px;
+/* Clean centered login + app shell */
+:root{
+  --bg:#f4f6fb;--card:#fff;--text:#0f172a;--muted:#64748b;
+  --border:rgba(15,23,42,.12);--shadow:0 10px 30px rgba(15,23,42,.1);
+  --primary:#2563eb;--primary-h:#1d4ed8;--danger:#991b1b;
+  --radius:14px
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(37,99,235,.08), transparent 55%),
+    radial-gradient(900px 500px at 85% 15%, rgba(14,165,233,.08), transparent 55%),
+    var(--bg);
+}
+.wallit-shell{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
+.wallit-card{
+  width:100%;max-width:420px;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px
+}
+.wallit-title{margin:0;font-size:24px;letter-spacing:-.02em}
+.wallit-subtitle{margin:6px 0 14px;color:var(--muted)}
+.wallit-form{display:flex;flex-direction:column;gap:12px}
+.wallit-field{display:flex;flex-direction:column;gap:6px}
+.wallit-label{font-size:13px;color:var(--muted)}
+.wallit-input{
+  height:44px;padding:10px 12px;border-radius:12px;border:1px solid var(--border)
+}
+.wallit-input:focus{outline:none;border-color:var(--primary)}
+.wallit-btn{
+  height:44px;border-radius:12px;border:none;cursor:pointer;
+  background:var(--primary);color:#fff;font-weight:600
+}
+.wallit-btn:hover{background:var(--primary-h)}
+.wallit-error{
+  margin-top:6px;background:#fff3f3;border:1px solid #f1b1b1;
+  color:var(--danger);padding:10px;border-radius:10px;font-size:14px
 }
