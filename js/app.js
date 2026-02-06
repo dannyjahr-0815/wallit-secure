@@ -1,1 +1,1 @@
-document.getElementById("app").innerText = "Wallet erfolgreich geladen ✅";
+document.getElementById("app").textContent = "Bereit.";

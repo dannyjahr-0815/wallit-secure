@@ -1,15 +1,24 @@
 import { api } from "./api.js";
 
-export async function login(email, password) {
+const form = document.getElementById("loginForm");
+const errorEl = document.getElementById("error");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorEl.hidden = true;
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
   try {
     await api("/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
-    return true;
-  } catch {
-    alert("Login fehlgeschlagen");
-    return false;
+    window.location.href = "app.html";
+  } catch (err) {
+    errorEl.textContent = err.message || "Login fehlgeschlagen";
+    errorEl.hidden = false;
   }
-}
+});
