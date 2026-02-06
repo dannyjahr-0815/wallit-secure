@@ -20,21 +20,16 @@
   <script type="module">
     import { API_BASE } from "./js/config.js";
 
-    // Auth gate: requires valid session cookie from Cloud Run API
     window.__wallitAuthReady = (async () => {
       try {
         const res = await fetch(API_BASE + "/auth/me", { credentials: "include" });
         if (!res.ok) throw new Error("unauthorized");
         const data = await res.json().catch(() => ({}));
-
-        // Accept several possible shapes
         const uid = data.userId || data.uid || data.id || data.user || null;
         if (!uid || typeof uid !== "string") throw new Error("no-user-id");
 
-        // Force Wallit to use auth userId as canonical userId for storage & Firestore paths
         try { localStorage.setItem("userId", uid); } catch {}
 
-        // Ensure URL param is set (constructor reads URL first)
         const url = new URL(window.location.href);
         if (url.searchParams.get("userId") !== uid) {
           url.searchParams.set("userId", uid);
@@ -44,13 +39,8 @@
         window.__wallitUserId = uid;
         return { ok: true, userId: uid };
       } catch (e) {
-        // redirect to login if not authenticated
-        try {
-          const next = encodeURIComponent("app.html");
-          window.location.replace("login.html?next=" + next);
-        } catch {
-          window.location.href = "login.html";
-        }
+        const next = encodeURIComponent("./app.html");
+        window.location.replace("login.html?next=" + next);
         return { ok: false };
       }
     })();
@@ -3912,6 +3902,12 @@ details.wallit-accordion{
   box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.5) !important;
 }
 
+</style>
+
+
+<style>
+/* Safety: ensure Tailwind's .hidden exists even if CDN fails */
+.hidden{ display:none !important; }
 </style>
 
 </head>
@@ -12102,10 +12098,7 @@ const gesamtEinkommen = einkommen + zusatzeinkommen;
     setTimeout(() => {
       try {
         
-        
-        // ✅ Ensure authenticated userId is set before Wallit bootstraps
-        if (window.__wallitAuthReady) { try { await window.__wallitAuthReady; } catch {} }
-// --- v15.1 hotfix: ensure escapeHtml exists on instance (used by year view) ---
+        // --- v15.1 hotfix: ensure escapeHtml exists on instance (used by year view) ---
         if (!FinanceManagerCloud.prototype.escapeHtml) {
           FinanceManagerCloud.prototype.escapeHtml = function (value) {
             const s = String(value ?? '');
