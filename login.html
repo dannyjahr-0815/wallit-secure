@@ -1,25 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wallit – Login</title>
+  <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-  <h1>Login</h1>
+  <div class="wallit-shell">
+    <div class="wallit-card">
+      <div class="wallit-brand">
+        <h1 class="wallit-title">Wallit</h1>
+      </div>
+      <p class="wallit-subtitle">Bitte melde dich an</p>
 
-  <input id="email" placeholder="E-Mail">
-  <input id="password" type="password" placeholder="Passwort">
-  <button id="loginBtn">Login</button>
+      <form class="wallit-form" id="loginForm">
+        <div class="wallit-field">
+          <label class="wallit-label">E-Mail</label>
+          <input class="wallit-input" type="email" id="email" required />
+        </div>
+        <div class="wallit-field">
+          <label class="wallit-label">Passwort</label>
+          <input class="wallit-input" type="password" id="password" required />
+        </div>
+        <button class="wallit-btn" type="submit">Anmelden</button>
+        <div class="wallit-error" id="error" hidden></div>
+      </form>
+    </div>
+  </div>
 
-  <script type="module">
-    import { login } from "./js/auth.js";
-
-    document.getElementById("loginBtn").onclick = async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const ok = await login(email, password);
-      if (ok) location.href = "app.html";
-    };
-  </script>
+  <script type="module" src="js/auth.js"></script>
 </body>
 </html>
